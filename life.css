@@ -1,0 +1,49 @@
+﻿body {
+}
+
+#lifeCanvas {
+    border: 2px solid black;
+    background-color: white;
+}
+
+.lifeGenerations {
+    border-right-style: solid;
+    border-right-color: white;
+    border-right-width: 15px;
+}
+
+.content {
+    display: -webkit-box;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#lifeInput {
+    text-align: center;
+}
+
+.lifeStartButton {
+    font-size: 24px;
+    line-height: 1.1;
+    background-color: white;
+    margin: 0 0 10px;
+    color: black;
+    border: 2px solid #555555;
+}
+
+.lifeText {
+    font-size: 24px;
+    line-height: 1.1;
+    color: #252525;
+    margin: 0 0 10px;
+    font-weight: normal;
+}
+
+.lifeStartButton:hover {
+    background-color: #555555;
+    color: white;
+}
