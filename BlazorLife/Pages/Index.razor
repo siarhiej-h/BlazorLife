@@ -1,0 +1,73 @@
+﻿@page "/"
+@inject WindowInterop _windowInterop;
+
+@if (generationsLeft > 0)
+{
+    <h2 class="lifeText lifeGenerations">Generations left @generationsLeft</h2>
+    <button class="lifeStartButton" type="reset" @onclick="OnStop">Stop life simulation</button>
+}
+else
+{
+    <EditForm Model="@inputModel" OnValidSubmit="Run" id="lifeInput" class="lifeText">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <InputText class="lifeText" @bind-Value="inputModel.GenerationsToCalculate" />
+        <button class="lifeStartButton" type="submit">Start life simulation</button>
+
+    </EditForm>
+}
+
+@code {
+    private InputModel inputModel = new InputModel();
+
+    private Grid _grid;
+
+    private int generationsLeft;
+
+    private int _delay = 20;
+
+    private int _pixelSize = 10;
+
+    private bool _stopped = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await _windowInterop.Init(_pixelSize);
+
+        var (rows, cols) = await _windowInterop.GetSize(_pixelSize);
+
+        _grid = new Grid(cols, rows, 0.1);
+        await _windowInterop.Paint(_grid.GetAliveCells());
+    }
+
+    private void OnStop()
+    {
+        generationsLeft = 0;
+        _stopped = true;
+    }
+
+    private async Task Run()
+    {
+        if (!int.TryParse(inputModel.GenerationsToCalculate, out int number))
+        {
+            return;
+        }
+
+        _stopped = false;
+        generationsLeft = number;
+        for (int i = 0; i != number; i++)
+        {
+            if (_stopped)
+            {
+                return;
+            }
+
+            var data = _grid.NextGeneration();
+            await _windowInterop.Paint(data.alive, data.dead);
+            generationsLeft--;
+            await Task.Delay(_delay);
+            StateHasChanged();
+        }
+    }
+}
