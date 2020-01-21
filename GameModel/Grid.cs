@@ -5,6 +5,8 @@ namespace GameModel
 {
     public class Grid
     {
+        private static Random Random = new Random(Guid.NewGuid().GetHashCode());
+
         private Cell[,] Cells;
 
         private Cell[,] CellsNext;
@@ -34,14 +36,13 @@ namespace GameModel
 
         private static void PopulateGrid(Cell[,] cells, Cell[,] nextGen, double probability)
         {
-            var rand = new Random(DateTime.Now.Millisecond);
             var height = cells.GetLength(0);
             var width = cells.GetLength(1);
             for (int i = 0; i != height; i++)
             {
                 for (int j = 0; j != width; j++)
                 {
-                    var outcome = rand.NextDouble() < probability ? true : false;
+                    var outcome = Random.NextDouble() < probability ? true : false;
                     cells[i, j] = new Cell(outcome);
                     nextGen[i, j] = new Cell(false);
                 }

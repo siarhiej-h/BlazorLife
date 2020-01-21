@@ -40,6 +40,10 @@
             this.ctx.fillRect(x, y, size, size);
         }
     }
+
+    clear() {
+        this.ctx.clearRect(0, 0, this.cols * this.pixelSize, this.rows * this.pixelSize);
+    }
 }
 
 function createInteropModel(pixelSize) {
