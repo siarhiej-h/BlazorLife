@@ -42,5 +42,10 @@ namespace BlazorLife
         {
             await _jsRuntime.InvokeVoidAsync("createInteropModel", pixelSize);
         }
+
+        public async Task Clear()
+        {
+            await _jsRuntime.InvokeVoidAsync("interopModel.clear");
+        }
     }
 }
