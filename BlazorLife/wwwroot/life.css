@@ -7,28 +7,34 @@
     display: -ms-flexbox;
     display: -webkit-flex;
     display: flex;
+    min-height: 100%;
     align-items: center;
     justify-content: center;
+    flex-direction: row;
+    font-family: sans-serif;
+    margin-bottom: 10px;
 }
 
-.lifeText, #lifeInput {
+.lifeText {
     font-size: 24px;
     line-height: 1.1;
     color: #252525;
-    margin: 0 0 10px;
+    margin: 0px;
     font-weight: normal;
-    border-right-style: solid;
-    border-right-color: white;
-    border-right-width: 15px;
 }
 
 .lifeControlButton {
     font-size: 24px;
-    line-height: 1.1;
     background-color: white;
-    margin: 0 0 10px;
     color: black;
     border: 2px solid #555555;
+    margin: 5px;
+}
+
+.lifeText {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
 }
 
 .lifeControlButton:hover {

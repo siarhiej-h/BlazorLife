@@ -34,6 +34,11 @@ namespace GameModel
             }
         }
 
+        public void Set(int x, int y, bool isAlive)
+        {
+            Cells[y, x].IsAlive = isAlive;
+        }
+
         private static void PopulateGrid(Cell[,] cells, Cell[,] nextGen, double probability)
         {
             var height = cells.GetLength(0);
