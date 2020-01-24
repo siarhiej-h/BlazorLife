@@ -18,6 +18,13 @@
     }
 </form>
 
+<div class="gliderMode">
+    <input type="checkbox" id="gliderMode-checkbox" value=@_isGlider @onchange=@OnGliderModeValueChange >
+    <label class="gliderMode-label" for="gliderMode-checkbox">
+        <span class="gliderMode-inner"></span>
+    </label>
+</div>
+
 @code {
     private Grid _grid;
 
@@ -29,16 +36,34 @@
 
     private bool _started = false;
 
+    private bool _isGlider = true;
+
     private (int Rows, int Cols) _size;
+
+    [JSInvokable]
+    public async Task JsOnClick(CellData[] cells)
+    {
+        foreach (var cell in cells)
+        {
+            _grid.Set(cell.X, cell.Y, cell.IsAlive);
+        }
+        await Task.Yield();
+    }
 
     protected override async Task OnInitializedAsync()
     {
-        await _windowInterop.Init(_pixelSize);
+        await _windowInterop.Init(DotNetObjectReference.Create(this), _pixelSize, _isGlider);
 
         var (rows, cols) = _size = await _windowInterop.GetSize(_pixelSize);
 
         _grid = new Grid(cols, rows, 0.1);
         await _windowInterop.Paint(_grid.GetAliveCells());
+    }
+
+    private async Task OnGliderModeValueChange(ChangeEventArgs  evt)
+    {
+        _isGlider = !_isGlider;
+        await _windowInterop.SwitchMode(_isGlider);
     }
 
     private async Task OnStartStop()

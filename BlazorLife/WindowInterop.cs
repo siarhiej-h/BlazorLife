@@ -1,5 +1,5 @@
 ﻿using Microsoft.JSInterop;
-using System;
+using BlazorLife.Pages;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -38,14 +38,19 @@ namespace BlazorLife
             return (values[0], values[1]);
         }
 
-        public async Task Init(int pixelSize)
+        public async Task Init(DotNetObjectReference<Index> componenteRef, int pixelSize, bool isGliderMode)
         {
-            await _jsRuntime.InvokeVoidAsync("createInteropModel", pixelSize);
+            await _jsRuntime.InvokeVoidAsync("createInteropModel", componenteRef, pixelSize, isGliderMode);
         }
 
         public async Task Clear()
         {
             await _jsRuntime.InvokeVoidAsync("interopModel.clear");
+        }
+
+        public async Task SwitchMode(bool isGliderMode)
+        {
+            await _jsRuntime.InvokeVoidAsync("interopModel.switchClickMode", isGliderMode);
         }
     }
 }
