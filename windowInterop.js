@@ -1,5 +1,5 @@
 ﻿class WindowInteropModel {
-    constructor(dotNetRef, pixelSize, isGliderMode, gliderDirection) {
+    constructor(dotNetRef, pixelSize) {
         this.dotNetRef = dotNetRef;
 
         const canvas = document.getElementById('lifeCanvas');
@@ -14,8 +14,8 @@
         this.cols = 2 * Math.floor(containerWidth / pixelSize / 2);
         this.rows = 2 * Math.floor(containerHeight / pixelSize / 2);
 
-        this.isGliderMode = isGliderMode;
-        this.gliderDirection = gliderDirection;
+        this.isGliderMode = null;
+        this.gliderDirection = null;
 
         canvas.width = this.pixelSize * this.cols;
         canvas.height = this.pixelSize * this.rows;
@@ -75,12 +75,15 @@
         }
     }
 
-    switchClickMode(isGliderMode) {
+    setGliderMode(isGliderMode, direction) {
         this.isGliderMode = isGliderMode;
 
+        if (direction) {
+            this.gliderDirection = direction;
+        }
     }
 
-    switchGliderDirection(direction) {
+    setGliderDirection(direction) {
         this.gliderDirection = direction;
     }
 
@@ -122,6 +125,6 @@
     }
 }
 
-function createInteropModel(dotNetRef, pixelSize, isGliderMode, gliderDirection) {
-    window.interopModel = new WindowInteropModel(dotNetRef, pixelSize, isGliderMode, gliderDirection);
+function createInteropModel(dotNetRef, pixelSize) {
+    window.interopModel = new WindowInteropModel(dotNetRef, pixelSize);
 }
