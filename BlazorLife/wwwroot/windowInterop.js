@@ -1,5 +1,5 @@
 ﻿class WindowInteropModel {
-    constructor(dotNetRef, pixelSize, isGliderMode) {
+    constructor(dotNetRef, pixelSize, isGliderMode, gliderDirection) {
         this.dotNetRef = dotNetRef;
 
         const canvas = document.getElementById('lifeCanvas');
@@ -9,12 +9,13 @@
         this.pixelSize = pixelSize;
         this.pixelBorderSize = 1;
 
-        let containerWidth = window.innerWidth * .99;
-        let containerHeight = window.innerHeight * .90;
+        let containerWidth = window.outerWidth * .99;
+        let containerHeight = window.outerHeight * .85;
         this.cols = 2 * Math.floor(containerWidth / pixelSize / 2);
         this.rows = 2 * Math.floor(containerHeight / pixelSize / 2);
 
         this.isGliderMode = isGliderMode;
+        this.gliderDirection = gliderDirection;
 
         canvas.width = this.pixelSize * this.cols;
         canvas.height = this.pixelSize * this.rows;
@@ -34,11 +35,7 @@
 
         let cells = [];
         if (this.isGliderMode) {
-            cells = [
-                { x: x - 1, y: y - 1, isAlive: true }, { x: x, y: y - 1, isAlive: true }, { x: x + 1, y: y - 1, isAlive: true },
-                { x: x - 1, y: y, isAlive: false }, { x: x, y: y, isAlive: false }, { x: x + 1, y: y, isAlive: true },
-                { x: x - 1, y: y +1, isAlive: false }, { x: x, y: y + 1, isAlive: true }, { x: x + 1, y: y + 1, isAlive: false },
-            ];
+            cells = this.getGlider(x, y);
         }
         else {
             cells = [{ x: x, y: y, isAlive: true }];
@@ -80,6 +77,44 @@
 
     switchClickMode(isGliderMode) {
         this.isGliderMode = isGliderMode;
+
+    }
+
+    switchGliderDirection(direction) {
+        this.gliderDirection = direction;
+    }
+
+    getGlider(x, y) {
+        let left = x === 0 ? this.cols - 1 : x - 1;
+        let right = x === this.cols - 1 ? 0 : x + 1;
+        let up = y === 0 ? this.rows - 1 : y - 1;
+        let down = y === this.rows - 1 ? 0 : y + 1;
+        switch (this.gliderDirection) {
+            case 0:
+                return [
+                    { x: left, y: up, isAlive: true }, { x: x, y: up, isAlive: true }, { x: right, y: up, isAlive: true },
+                    { x: left, y: y, isAlive: true }, { x: x, y: y, isAlive: false }, { x: right, y: y, isAlive: false },
+                    { x: left, y: down, isAlive: false }, { x: x, y: down, isAlive: true }, { x: right, y: down, isAlive: false },
+                ];
+            case 1:
+                return [
+                    { x: left, y: up, isAlive: true }, { x: x, y: up, isAlive: true }, { x: right, y: up, isAlive: true },
+                    { x: left, y: y, isAlive: false }, { x: x, y: y, isAlive: false }, { x: right, y: y, isAlive: true },
+                    { x: left, y: down, isAlive: false }, { x: x, y: down, isAlive: true }, { x: right, y: down, isAlive: false },
+                ];
+            case 2:
+                return [
+                    { x: left, y: up, isAlive: false }, { x: x, y: up, isAlive: true }, { x: right, y: up, isAlive: false },
+                    { x: left, y: y, isAlive: true }, { x: x, y: y, isAlive: false }, { x: right, y: y, isAlive: false },
+                    { x: left, y: down, isAlive: true }, { x: x, y: down, isAlive: true }, { x: right, y: down, isAlive: true },
+                ];
+            case 3:
+                return [
+                    { x: left, y: up, isAlive: false }, { x: x, y: up, isAlive: true }, { x: right, y: up, isAlive: false },
+                    { x: left, y: y, isAlive: false }, { x: x, y: y, isAlive: false }, { x: right, y: y, isAlive: true },
+                    { x: left, y: down, isAlive: true }, { x: x, y: down, isAlive: true }, { x: right, y: down, isAlive: true },
+                ];
+        }
     }
 
     clear() {
@@ -87,6 +122,6 @@
     }
 }
 
-function createInteropModel(dotNetRef, pixelSize, isGliderMode) {
-    window.interopModel = new WindowInteropModel(dotNetRef, pixelSize, isGliderMode);
+function createInteropModel(dotNetRef, pixelSize, isGliderMode, gliderDirection) {
+    window.interopModel = new WindowInteropModel(dotNetRef, pixelSize, isGliderMode, gliderDirection);
 }

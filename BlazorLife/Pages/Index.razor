@@ -1,11 +1,22 @@
 ﻿@page "/"
 @inject WindowInterop _windowInterop;
 
-<h2 class="lifeText">Generations passed @_generationsPassed</h2>
+@if (!_started)
+{
+    @*<select class="lifeStartMode">
+        <option value=@StartOptions.Random>Random (10% alive)</option>
+        <option value=@StartOptions.Blank>Blank</option>
+    </select>*@
+}
+else
+{
+    <h2 class="lifeText">Generations passed @_generationsPassed</h2>
+}
+
 <form @onsubmit="OnStartStop" @onreset="OnReset">
     @if (_started)
     {
-        <button class="lifeControlButton" type="submit">Stop life simulation</button>
+        <button class="lifeControlButton lifeStarted" type="submit">Stop life simulation</button>
     }
     else if (_generationsPassed == 0)
     {
@@ -19,11 +30,53 @@
 </form>
 
 <div class="gliderMode">
-    <input type="checkbox" id="gliderMode-checkbox" value=@_isGlider @onchange=@OnGliderModeValueChange >
+    <input type="checkbox" id="gliderMode-checkbox" value=@_isGlider @onchange=@OnGliderModeValueChange>
     <label class="gliderMode-label" for="gliderMode-checkbox">
         <span class="gliderMode-inner"></span>
     </label>
 </div>
+
+@if (_isGlider)
+{
+    <div class="gliderDirection">
+        <label class="gliderDirectionLabel">
+            <input type="radio"
+                   class="gliderDirectionRadio"
+                   name="gliderDirection"
+                   value="@GliderDirection.UpLeft"
+                   @onchange="OnDirectionChange"
+                   checked="@(_gliderDirection == GliderDirection.UpLeft)">
+            <span class="gliderCheckBox"></span>
+        </label>
+        <label class="gliderDirectionLabel">
+            <input type="radio"
+                   class="gliderDirectionRadio"
+                   name="gliderDirection"
+                   value="@GliderDirection.UpRight"
+                   @onchange="OnDirectionChange"
+                   checked="@(_gliderDirection == GliderDirection.UpRight)">
+            <span class="gliderCheckBox"></span>
+        </label>
+        <label class="gliderDirectionLabel">
+            <input type="radio"
+                   class="gliderDirectionRadio"
+                   name="gliderDirection"
+                   value="@GliderDirection.DownLeft"
+                   @onchange="OnDirectionChange"
+                   checked="@(_gliderDirection == GliderDirection.DownLeft)">
+            <span class="gliderCheckBox"></span>
+        </label>
+        <label class="gliderDirectionLabel">
+            <input type="radio"
+                   class="gliderDirectionRadio"
+                   name="gliderDirection"
+                   value="@GliderDirection.DownRight"
+                   @onchange="OnDirectionChange"
+                   checked="@(_gliderDirection == GliderDirection.DownRight)">
+            <span class="gliderCheckBox"></span>
+        </label>
+    </div>
+}
 
 @code {
     private Grid _grid;
@@ -37,6 +90,8 @@
     private bool _started = false;
 
     private bool _isGlider = true;
+
+    private GliderDirection _gliderDirection = GliderDirection.DownRight;
 
     private (int Rows, int Cols) _size;
 
@@ -52,7 +107,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        await _windowInterop.Init(DotNetObjectReference.Create(this), _pixelSize, _isGlider);
+        await _windowInterop.Init(DotNetObjectReference.Create(this), _pixelSize, _isGlider, _gliderDirection);
 
         var (rows, cols) = _size = await _windowInterop.GetSize(_pixelSize);
 
@@ -60,7 +115,13 @@
         await _windowInterop.Paint(_grid.GetAliveCells());
     }
 
-    private async Task OnGliderModeValueChange(ChangeEventArgs  evt)
+    private async Task OnDirectionChange(ChangeEventArgs evt)
+    {
+        _gliderDirection = Enum.Parse<GliderDirection>((string)evt.Value);
+        await _windowInterop.SwitchGliderDirection(_gliderDirection);
+    }
+
+    private async Task OnGliderModeValueChange(ChangeEventArgs evt)
     {
         _isGlider = !_isGlider;
         await _windowInterop.SwitchMode(_isGlider);

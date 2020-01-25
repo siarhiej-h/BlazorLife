@@ -38,9 +38,9 @@ namespace BlazorLife
             return (values[0], values[1]);
         }
 
-        public async Task Init(DotNetObjectReference<Index> componenteRef, int pixelSize, bool isGliderMode)
+        public async Task Init(DotNetObjectReference<Index> componenteRef, int pixelSize, bool isGliderMode, GameModel.GliderDirection direction)
         {
-            await _jsRuntime.InvokeVoidAsync("createInteropModel", componenteRef, pixelSize, isGliderMode);
+            await _jsRuntime.InvokeVoidAsync("createInteropModel", componenteRef, pixelSize, isGliderMode, direction);
         }
 
         public async Task Clear()
@@ -51,6 +51,11 @@ namespace BlazorLife
         public async Task SwitchMode(bool isGliderMode)
         {
             await _jsRuntime.InvokeVoidAsync("interopModel.switchClickMode", isGliderMode);
+        }
+
+        public async Task SwitchGliderDirection(GameModel.GliderDirection direction)
+        {
+            await _jsRuntime.InvokeVoidAsync("interopModel.switchGliderDirection", direction);
         }
     }
 }
