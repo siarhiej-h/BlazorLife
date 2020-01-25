@@ -1,5 +1,5 @@
 ﻿using Microsoft.JSInterop;
-using BlazorLife.Pages;
+using BlazorLife.Shared;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -38,9 +38,9 @@ namespace BlazorLife
             return (values[0], values[1]);
         }
 
-        public async Task Init(DotNetObjectReference<Index> componenteRef, int pixelSize, bool isGliderMode, GameModel.GliderDirection direction)
+        public async Task Init(DotNetObjectReference<LifeControl> componenteRef, int pixelSize)
         {
-            await _jsRuntime.InvokeVoidAsync("createInteropModel", componenteRef, pixelSize, isGliderMode, direction);
+            await _jsRuntime.InvokeVoidAsync("createInteropModel", componenteRef, pixelSize);
         }
 
         public async Task Clear()
@@ -48,14 +48,19 @@ namespace BlazorLife
             await _jsRuntime.InvokeVoidAsync("interopModel.clear");
         }
 
-        public async Task SwitchMode(bool isGliderMode)
+        public async Task SetGliderMode(bool isGliderMode)
         {
-            await _jsRuntime.InvokeVoidAsync("interopModel.switchClickMode", isGliderMode);
+            await _jsRuntime.InvokeVoidAsync("interopModel.setGliderMode", isGliderMode);
         }
 
-        public async Task SwitchGliderDirection(GameModel.GliderDirection direction)
+        public async Task SetGliderMode(bool isGliderMode, GameModel.GliderDirection direction)
         {
-            await _jsRuntime.InvokeVoidAsync("interopModel.switchGliderDirection", direction);
+            await _jsRuntime.InvokeVoidAsync("interopModel.setGliderMode", isGliderMode, direction);
+        }
+
+        public async Task SetGliderDirection(GameModel.GliderDirection direction)
+        {
+            await _jsRuntime.InvokeVoidAsync("interopModel.setGliderDirection", direction);
         }
     }
 }
