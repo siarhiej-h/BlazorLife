@@ -1,0 +1,91 @@
+﻿@inject WindowInterop _windowInterop;
+
+<div class="gliderMode">
+    <input type="checkbox" id="gliderModeCheckbox" value=@IsGlider @onchange=OnGliderModeValueChange>
+    <label class="gliderModeLabel" for="gliderModeCheckbox">
+        <span class="gliderModeInner"></span>
+    </label>
+</div>
+
+@if (_isGlider)
+{
+    <div class="gliderDirection">
+        <label class="gliderDirectionLabel">
+            <input type="radio"
+                   class="gliderDirectionRadio"
+                   name="gliderDirection"
+                   value="@GliderDirection.UpLeft"
+                   @onchange="OnDirectionChange"
+                   checked="@(_gliderDirection == GliderDirection.UpLeft)">
+            <span class="gliderDirectionBox"></span>
+        </label>
+        <label class="gliderDirectionLabel">
+            <input type="radio"
+                   class="gliderDirectionRadio"
+                   name="gliderDirection"
+                   value="@GliderDirection.UpRight"
+                   @onchange="OnDirectionChange"
+                   checked="@(_gliderDirection == GliderDirection.UpRight)">
+            <span class="gliderDirectionBox"></span>
+        </label>
+        <label class="gliderDirectionLabel">
+            <input type="radio"
+                   class="gliderDirectionRadio"
+                   name="gliderDirection"
+                   value="@GliderDirection.DownLeft"
+                   @onchange="OnDirectionChange"
+                   checked="@(_gliderDirection == GliderDirection.DownLeft)">
+            <span class="gliderDirectionBox"></span>
+        </label>
+        <label class="gliderDirectionLabel">
+            <input type="radio"
+                   class="gliderDirectionRadio"
+                   name="gliderDirection"
+                   value="@GliderDirection.DownRight"
+                   @onchange="OnDirectionChange"
+                   checked="@(_gliderDirection == GliderDirection.DownRight)">
+            <span class="gliderDirectionBox"></span>
+        </label>
+    </div>
+}
+
+@code {
+
+    [Parameter]
+    public bool? IsGlider { get; set; }
+
+    [Parameter]
+    public GliderDirection? InitialDirection { get; set; }
+
+    private bool _isGlider { get; set; } = true;
+
+    private GliderDirection _gliderDirection { get; set; } = GliderDirection.UpRight;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (IsGlider.HasValue)
+        {
+            _isGlider = IsGlider.Value;
+        }
+
+        if (InitialDirection.HasValue)
+        {
+            _gliderDirection = InitialDirection.Value;
+        }
+
+        await base.OnInitializedAsync();
+        await _windowInterop.SetGliderMode(_isGlider, _gliderDirection);
+    }
+
+    private async Task OnDirectionChange(ChangeEventArgs evt)
+    {
+        _gliderDirection = Enum.Parse<GliderDirection>((string)evt.Value);
+        await _windowInterop.SetGliderDirection(_gliderDirection);
+    }
+
+    private async Task OnGliderModeValueChange(ChangeEventArgs evt)
+    {
+        _isGlider = !_isGlider;
+        await _windowInterop.SetGliderMode(_isGlider);
+    }
+}
