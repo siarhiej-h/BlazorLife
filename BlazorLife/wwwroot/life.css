@@ -24,22 +24,27 @@
 }
 
 .lifeControlButton {
-    font-size: 24px;
+    height: 34px;
+    line-height: 30px;
+    font-size: 14px;
     background-color: white;
     color: black;
     border: 2px solid #555555;
     margin: 5px;
+    border-radius: 20px;
+    font-family: Arial, sans-serif;
+    font-weight: bold;
+}
+
+.lifeStarted, .lifeControlButton:hover {
+    background-color: #555555;
+    color: white;
 }
 
 .lifeText {
     -webkit-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
-}
-
-.lifeControlButton:hover {
-    background-color: #555555;
-    color: white;
 }
 
 #lifeCanvas {
