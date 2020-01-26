@@ -1,45 +1,54 @@
 ﻿@inject WindowInterop _windowInterop;
 
-@if (!_started)
-{
-    @*<select class="lifeStartMode">
-            <option value=@StartOptions.Random>Random (10% alive)</option>
-            <option value=@StartOptions.Blank>Blank</option>
-        </select>*@
-}
-else
-{
-    <h2 class="lifeText">Generations passed @_generationsPassed</h2>
-}
-
-<form @onsubmit="OnStartStop" @onreset="OnReset">
-    @if (_started)
+<div class="lifeContent">
+    @if (!_started && _generationsPassed == 0)
     {
-        <button class="lifeControlButton lifeStarted" type="submit">Stop life simulation</button>
-    }
-    else if (_generationsPassed == 0)
-    {
-        <button class="lifeControlButton" type="submit">Start life simulation</button>
+        <select class="lifeStartDropDown" @onchange="OnStartModeSelected">
+            <option value=@StartOptions.Random selected="@(_startOptions == StartOptions.Random)">Random (10% alive)</option>
+            <option value=@StartOptions.Blank selected="@(_startOptions == StartOptions.Blank)">Blank</option>
+        </select>
     }
     else
     {
-        <button class="lifeControlButton" type="submit">Continue life simulation</button>
-        <button class="lifeControlButton" type="reset">Reset life simulation</button>
+        <h2 class="lifeText">Generations passed @_generationsPassed</h2>
     }
-</form>
 
-<GliderModeSwitch IsGlider="true" InitialDirection="GameModel.GliderDirection.UpRight" />
+    <form @onsubmit="OnStartStop" @onreset="OnReset">
+        @if (_started)
+        {
+            <button class="lifeControlButton lifeStarted" type="submit">Stop life simulation</button>
+        }
+        else if (_generationsPassed == 0)
+        {
+            <button class="lifeControlButton" type="submit">Start life simulation</button>
+        }
+        else
+        {
+            <button class="lifeControlButton" type="submit">Resume life simulation</button>
+            <button class="lifeControlButton" type="reset">Reset life simulation</button>
+        }
+    </form>
+
+    <GliderModeSwitch IsGlider="true" InitialDirection="GliderDirection.UpLeft" />
+</div>
+
+@if (!_started && _generationsPassed == 0)
+{
+    <input type="range" min="2" max="50" step="2" value="@_pixelSize" class="lifeSlider" @onchange="OnSliderValueChange">
+}
 
 @code {
     private Grid _grid;
 
     private int _delay = 20;
 
-    private int _pixelSize = 10;
+    private int _pixelSize = 4;
 
     private int _generationsPassed = 0;
 
     private bool _started = false;
+
+    private StartOptions _startOptions = StartOptions.Random;
 
     private (int Rows, int Cols) _size;
 
@@ -53,14 +62,38 @@ else
         await Task.Yield();
     }
 
+    public async Task OnStartModeSelected(ChangeEventArgs evt)
+    {
+        var newValue = Enum.Parse<StartOptions>((string)evt.Value);
+        if (newValue == _startOptions)
+        {
+            await Task.Yield();
+        }
+
+        _startOptions = newValue;
+        await OnReset();
+    }
+
+    public async Task OnSliderValueChange(ChangeEventArgs evt)
+    {
+        _pixelSize = int.Parse((string) evt.Value);
+        
+        await _windowInterop.Resize(_pixelSize);
+
+        var (rows, cols) = _size = await _windowInterop.GetSize();
+
+        _grid = Grid.Create(cols, rows, _startOptions, 0.1);
+        await _windowInterop.PaintBitmap(BitHelper.ConvertToIntegers(_grid.GetAliveCells()));
+    }
+
     protected override async Task OnInitializedAsync()
     {
         await _windowInterop.Init(DotNetObjectReference.Create(this), _pixelSize);
 
-        var (rows, cols) = _size = await _windowInterop.GetSize(_pixelSize);
+        var (rows, cols) = _size = await _windowInterop.GetSize();
 
-        _grid = new Grid(cols, rows, 0.1);
-        await _windowInterop.Paint(_grid.GetAliveCells());
+        _grid = Grid.Create(cols, rows, _startOptions, 0.1);
+        await _windowInterop.PaintBitmap(BitHelper.ConvertToIntegers(_grid.GetAliveCells()));
     }
 
     private async Task OnStartStop()
@@ -79,8 +112,8 @@ else
     private async Task OnReset()
     {
         await _windowInterop.Clear();
-        _grid = new Grid(_size.Cols, _size.Rows, 0.1);
-        await _windowInterop.Paint(_grid.GetAliveCells());
+        _grid = Grid.Create(_size.Cols, _size.Rows, _startOptions, 0.1);
+        await _windowInterop.PaintBitmap(BitHelper.ConvertToIntegers(_grid.GetAliveCells()));
         _generationsPassed = 0;
     }
 
@@ -89,7 +122,7 @@ else
         while (_started)
         {
             var data = _grid.NextGeneration();
-            await _windowInterop.Paint(data.alive, data.dead);
+            await _windowInterop.PaintBitmap(BitHelper.ConvertToIntegers(data));
             _generationsPassed++;
             await Task.Delay(_delay);
             StateHasChanged();

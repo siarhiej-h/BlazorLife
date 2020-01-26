@@ -15,32 +15,20 @@ namespace BlazorLife
             _jsRuntime = jsRunTime;
         }
 
-        public async Task Paint(IEnumerable<(int x, int y)> cellsAlive = null, IEnumerable<(int x, int y)> cellsDead = null)
+        public async Task<(int Rows, int Cols)> GetSize()
         {
-            cellsAlive ??= Enumerable.Empty<(int x, int y)>();
-            cellsDead ??= Enumerable.Empty<(int x, int y)>();
-            var obj = new
-            {
-                Alive = cellsAlive
-                    .Select(c => new { c.x, c.y })
-                    .ToArray(),
-                Dead = cellsDead
-                    .Select(c => new { c.x, c.y })
-                    .ToArray()
-            };
-
-            await _jsRuntime.InvokeVoidAsync("interopModel.paint", obj);
-        }
-
-        public async Task<(int Rows, int Cols)> GetSize(int pixelSize)
-        {
-            int[] values = await _jsRuntime.InvokeAsync<int[]>("interopModel.getSize", pixelSize);
+            int[] values = await _jsRuntime.InvokeAsync<int[]>("interopModel.getSize");
             return (values[0], values[1]);
         }
 
         public async Task Init(DotNetObjectReference<LifeControl> componenteRef, int pixelSize)
         {
             await _jsRuntime.InvokeVoidAsync("createInteropModel", componenteRef, pixelSize);
+        }
+
+        public async Task Resize(int pixelSize)
+        {
+            await _jsRuntime.InvokeVoidAsync("interopModel.resize", pixelSize);
         }
 
         public async Task Clear()
@@ -61,6 +49,11 @@ namespace BlazorLife
         public async Task SetGliderDirection(GameModel.GliderDirection direction)
         {
             await _jsRuntime.InvokeVoidAsync("interopModel.setGliderDirection", direction);
+        }
+
+        public async Task PaintBitmap(int[] array)
+        {
+            await _jsRuntime.InvokeVoidAsync("interopModel.processBitmap", array);
         }
     }
 }
