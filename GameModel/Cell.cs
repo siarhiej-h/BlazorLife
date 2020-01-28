@@ -4,7 +4,7 @@
     {
         public bool IsAlive;
 
-        public Cell[] Neighbours = new Cell[8];
+        public int NeighboursAlive = 0;
 
         public Cell(bool isAlive)
         {
