@@ -7,15 +7,23 @@ namespace GameModel
     {
         private static Random Random = new Random(Guid.NewGuid().GetHashCode());
 
-        public Cell[] Cells { get; private set; }
+        private Cell[] Cells { get; set; }
 
-        public Cell[] CellsNext { get; private set; }
+        private Cell[] CellsNext { get; set; }
 
         private BitArray BitMap;
 
         public int Width { get; private set; }
 
         public int Height { get; private set; }
+
+        public bool this [int x, int y]
+        {
+            get
+            {
+                return Cells[y * Width + x].IsAlive;
+            }
+        }
 
         private Grid(int width, int height)
         {
@@ -45,14 +53,6 @@ namespace GameModel
 
         public BitArray GetAliveCells()
         {
-            for (int i = 0; i != Cells.Length; i++)
-            {
-                if (Cells[i].IsAlive)
-                {
-                    BitMap.Set(i, true);
-                }
-            }
-
             return BitMap;
         }
 
@@ -176,6 +176,7 @@ namespace GameModel
                 {
                     var outcome = Random.NextDouble() < probability ? true : false;
                     grid.Cells[iWidth+ j].IsAlive = outcome;
+                    grid.BitMap.Set(iWidth + j, outcome);
                     if (outcome)
                     {
                         grid.UpdateCellNeighbours(grid.Cells, i, j, outcome);

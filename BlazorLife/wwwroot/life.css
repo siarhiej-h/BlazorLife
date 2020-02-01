@@ -55,10 +55,14 @@ body {
     /*Buttons need this explicitly for some reason*/
     font-size: 14px;
     font-family: Arial, Helvetica, sans-serif;
+    outline: none;
 }
 
 .gliderModeLabel {
     overflow: hidden;
+    max-height: calc(var(--controlPanelHeight) + 4px);
+    min-width: max-content;
+    margin: 0px 2px;
 }
 
 .lifeControlButton, .gliderModeLabel {
@@ -87,8 +91,6 @@ body {
 
 .gliderMode {
     position: relative;
-    width: 150px;
-    margin: 0px 5px;
 }
 
 .gliderMode input#gliderModeCheckbox {
@@ -96,9 +98,10 @@ body {
 }
 
 .gliderModeInner {
-    width: 200%;
+    width: 130px;
     min-width: 200%;
     margin-left: -100%;
+    margin-right: 2px;
     transition: margin 0.3s ease-in 0s;
     text-align: center;
 }
@@ -117,12 +120,12 @@ body {
 }
 
 #gliderModeCheckbox:checked + .gliderModeLabel .gliderModeInner {
-    margin-left: 0;
+    margin-left: 2px;
 }
 
 .gliderDirection {
     flex-wrap: wrap;
-    margin: 2px 0px;
+    margin: 2px;
     width: var(--controlPanelHeight);
     height: var(--controlPanelHeight);
     min-width: var(--controlPanelHeight);
