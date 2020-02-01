@@ -3,17 +3,19 @@
 <div class="lifeContent">
     @if (!_started && _generationsPassed == 0)
     {
-        <select class="lifeStartDropDown" @onchange="OnStartModeSelected">
-            <option value=@StartOptions.Random selected="@(_startOptions == StartOptions.Random)">Random (10% alive)</option>
-            <option value=@StartOptions.Blank selected="@(_startOptions == StartOptions.Blank)">Blank</option>
-        </select>
+        <div>
+            <select class="lifeStartDropDown" @onchange="OnStartModeSelected">
+                <option value=@StartOptions.Random selected="@(_startOptions == StartOptions.Random)">Random (10% alive)</option>
+                <option value=@StartOptions.Blank selected="@(_startOptions == StartOptions.Blank)">Blank</option>
+            </select>
+        </div>
     }
     else
     {
         <h2 class="lifeText">Generations passed @_generationsPassed</h2>
     }
 
-    <form @onsubmit="OnStartStop" @onreset="OnReset">
+    <form class="lifeForm" @onsubmit="OnStartStop" @onreset="OnReset">
         @if (_started)
         {
             <button class="lifeControlButton lifeStarted" type="submit">Stop life simulation</button>
