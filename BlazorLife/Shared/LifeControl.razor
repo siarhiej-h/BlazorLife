@@ -31,7 +31,7 @@
         }
     </form>
 
-    <GliderModeSwitch IsGlider="true" InitialDirection="GliderDirection.UpLeft" />
+    <GliderModeSwitch @ref="_gliderSwitch" InitialIsGlider="true" InitialDirection="GliderDirection.UpLeft" />
 </div>
 
 @if (!_started && _generationsPassed == 0)
@@ -54,14 +54,40 @@
 
     private (int Rows, int Cols) _size;
 
+    private GliderModeSwitch _gliderSwitch;
+
     [JSInvokable]
-    public async Task JsOnClick(CellData[] cells)
+    public async Task JsOnClick(int x, int y)
     {
-        foreach (var cell in cells)
+        if (_gliderSwitch.IsGlider)
         {
-            _grid.Set(cell.X, cell.Y, cell.IsAlive);
+            var glider = LifeFormsHelper.GetGlider(_gliderSwitch.GliderDirection, _grid, x, y);
+            var (alive, aliveCounter) = (new CellData[5], 0);
+            var (dead, deadCounter) = (new CellData[4], 0);
+            foreach (var cell in glider)
+            {
+                _grid.Set(cell.x, cell.y, cell.isAlive);
+                var cellData = new CellData { X = cell.x, Y = cell.y };
+                if (cell.isAlive)
+                {
+                    alive[aliveCounter++] = cellData;
+                }
+                else
+                {
+                    dead[deadCounter++] = cellData;
+                }
+            }
+
+            await _windowInterop.ProcessDiff(alive, dead);
         }
-        await Task.Yield();
+        else
+        {
+            var isAlive = !_grid[x, y];
+            _grid.Set(x, y, isAlive);
+            var cellData = new [] { new CellData { X = x, Y = y } };
+            var (alive, dead) = isAlive ? (cellData, (CellData[]) null) : (null, cellData);
+            await _windowInterop.ProcessDiff(alive, dead);
+        }
     }
 
     public async Task OnStartModeSelected(ChangeEventArgs evt)
@@ -79,7 +105,7 @@
     public async Task OnSliderValueChange(ChangeEventArgs evt)
     {
         _pixelSize = int.Parse((string) evt.Value);
-        
+
         await _windowInterop.Resize(_pixelSize);
 
         var (rows, cols) = _size = await _windowInterop.GetSize();

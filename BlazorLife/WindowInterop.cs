@@ -3,6 +3,7 @@ using BlazorLife.Shared;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using GameModel;
 
 namespace BlazorLife
 {
@@ -54,6 +55,11 @@ namespace BlazorLife
         public async Task PaintBitmap(int[] array)
         {
             await _jsRuntime.InvokeVoidAsync("interopModel.processBitmap", array);
+        }
+
+        public async Task ProcessDiff(CellData[] alive = null, CellData[] dead = null)
+        {
+            await _jsRuntime.InvokeVoidAsync("interopModel.processDiff", alive, dead);
         }
     }
 }
