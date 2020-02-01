@@ -20,7 +20,7 @@
     }
 
     resizeCanvas(canvas) {
-        let containerWidth = window.outerWidth * .99;
+        let containerWidth = window.outerWidth * .97;
         let containerHeight = window.outerHeight * .85;
         this.cols = 2 * Math.floor(containerWidth / this.pixelSize / 2);
         this.rows = 2 * Math.floor(containerHeight / this.pixelSize / 2);

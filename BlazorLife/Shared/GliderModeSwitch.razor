@@ -9,43 +9,45 @@
 
 @if (_isGlider)
 {
-    <div class="gliderDirection">
-        <label class="gliderDirectionLabel">
-            <input type="radio"
-                   class="gliderDirectionRadio"
-                   name="gliderDirection"
-                   value="@GliderDirection.UpLeft"
-                   @onchange="OnDirectionChange"
-                   checked="@(_gliderDirection == GliderDirection.UpLeft)">
-            <span class="gliderDirectionBox"></span>
-        </label>
-        <label class="gliderDirectionLabel">
-            <input type="radio"
-                   class="gliderDirectionRadio"
-                   name="gliderDirection"
-                   value="@GliderDirection.UpRight"
-                   @onchange="OnDirectionChange"
-                   checked="@(_gliderDirection == GliderDirection.UpRight)">
-            <span class="gliderDirectionBox"></span>
-        </label>
-        <label class="gliderDirectionLabel">
-            <input type="radio"
-                   class="gliderDirectionRadio"
-                   name="gliderDirection"
-                   value="@GliderDirection.DownLeft"
-                   @onchange="OnDirectionChange"
-                   checked="@(_gliderDirection == GliderDirection.DownLeft)">
-            <span class="gliderDirectionBox"></span>
-        </label>
-        <label class="gliderDirectionLabel">
-            <input type="radio"
-                   class="gliderDirectionRadio"
-                   name="gliderDirection"
-                   value="@GliderDirection.DownRight"
-                   @onchange="OnDirectionChange"
-                   checked="@(_gliderDirection == GliderDirection.DownRight)">
-            <span class="gliderDirectionBox"></span>
-        </label>
+    <div>
+        <div class="gliderDirection">
+            <label class="gliderDirectionLabel">
+                <input type="radio"
+                       class="gliderDirectionRadio"
+                       name="gliderDirection"
+                       value="@GliderDirection.UpLeft"
+                       @onchange="OnDirectionChange"
+                       checked="@(_gliderDirection == GliderDirection.UpLeft)">
+                <span class="gliderDirectionBox"></span>
+            </label>
+            <label class="gliderDirectionLabel">
+                <input type="radio"
+                       class="gliderDirectionRadio"
+                       name="gliderDirection"
+                       value="@GliderDirection.UpRight"
+                       @onchange="OnDirectionChange"
+                       checked="@(_gliderDirection == GliderDirection.UpRight)">
+                <span class="gliderDirectionBox"></span>
+            </label>
+            <label class="gliderDirectionLabel">
+                <input type="radio"
+                       class="gliderDirectionRadio"
+                       name="gliderDirection"
+                       value="@GliderDirection.DownLeft"
+                       @onchange="OnDirectionChange"
+                       checked="@(_gliderDirection == GliderDirection.DownLeft)">
+                <span class="gliderDirectionBox"></span>
+            </label>
+            <label class="gliderDirectionLabel">
+                <input type="radio"
+                       class="gliderDirectionRadio"
+                       name="gliderDirection"
+                       value="@GliderDirection.DownRight"
+                       @onchange="OnDirectionChange"
+                       checked="@(_gliderDirection == GliderDirection.DownRight)">
+                <span class="gliderDirectionBox"></span>
+            </label>
+        </div>
     </div>
 }
 

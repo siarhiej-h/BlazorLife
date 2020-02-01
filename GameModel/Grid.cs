@@ -62,6 +62,7 @@ namespace GameModel
             if (cell.IsAlive != isAlive)
             {
                 cell.IsAlive = isAlive;
+                BitMap.Set(y * Width + x, isAlive);
                 UpdateCellNeighbours(Cells, y, x, isAlive);
             }
         }

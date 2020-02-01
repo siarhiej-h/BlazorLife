@@ -17,7 +17,7 @@ body {
     background-color: white;
 }
 
-.lifeContent, .gliderModeLabel, .gliderModeInner, .gliderDirection, .gliderDirectionBox {
+.lifeContent, .lifeForm, .gliderModeLabel, .gliderModeInner, .gliderDirection, .gliderDirectionBox {
     display: -webkit-box;
     display: -moz-box;
     display: -ms-flexbox;
@@ -25,8 +25,12 @@ body {
     display: flex;
 }
 
+.lifeForm {
+    max-height: calc(var(--controlPanelHeight) + 4px);
+    min-width: max-content;
+}
+
 .lifeContent {
-    min-height: 100%;
     align-items: center;
     justify-content: center;
     margin-bottom: 10px;
@@ -34,6 +38,8 @@ body {
     font-family: Arial, Helvetica, sans-serif;
     height: var(--controlPanelHeight);
     line-height: var(--controlPanelHeight);
+    min-width: 600px;
+    min-height: var(--controlPanelHeight);
 }
 
 .lifeText {
@@ -44,7 +50,7 @@ body {
 
 .lifeControlButton {
     color: black;
-    margin: 5px;
+    margin: 0px 5px;
     line-height: inherit;
     /*Buttons need this explicitly for some reason*/
     font-size: 14px;
@@ -82,8 +88,7 @@ body {
 .gliderMode {
     position: relative;
     width: 150px;
-    margin-left: 5px;
-    margin-right: 5px;
+    margin: 0px 5px;
 }
 
 .gliderMode input#gliderModeCheckbox {
@@ -117,6 +122,7 @@ body {
 
 .gliderDirection {
     flex-wrap: wrap;
+    margin: 2px 0px;
     width: var(--controlPanelHeight);
     height: var(--controlPanelHeight);
     min-width: var(--controlPanelHeight);
@@ -150,7 +156,7 @@ body {
 
 select.lifeStartDropDown {
     border: 2px solid var(--niceDarkGreyColor);
-    margin: 5px;
+    margin: 2px 5px;
     font-size: 14px;
     font-family: Arial, Helvetica, sans-serif;
     font-weight: bold;
