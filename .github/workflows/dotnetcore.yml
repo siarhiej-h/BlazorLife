@@ -16,12 +16,12 @@ jobs:
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 6.0.x
+    - name: dotnet install wasm tools
+      run: dotnet workload install wasm-tools
     - name: Publish with dotnet
       run: dotnet publish --configuration Release --output build
     - name: Deploy to Github Pages
       uses: JamesIves/github-pages-deploy-action@4.1.5
       with:
-        ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
         BRANCH: gh-pages # The branch the action should deploy to.
-        FOLDER: build/BlazorLife/dist # The folder the action should deploy.
-        CLEAN: true
+        FOLDER: build/wwwroot # The folder the action should deploy.
