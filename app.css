@@ -1,0 +1,189 @@
+﻿:root {
+    --niceDarkGreyColor: #555555;
+    --niceGreyColor: #999999;
+    --niceLightGreyColor: #EEEEEE;
+    --controlPanelHeight: 30px;
+}
+
+body {
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+}
+
+#lifeCanvas {
+    border: 2px solid black;
+    background-color: white;
+}
+
+.lifeContent, .lifeForm, .gliderModeLabel, .gliderModeInner, .gliderDirection, .gliderDirectionBox {
+    display: -webkit-box;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    display: flex;
+}
+
+.lifeForm {
+    max-height: calc(var(--controlPanelHeight) + 4px);
+    min-width: max-content;
+}
+
+.lifeContent {
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 10px;
+    font-size: 14px;
+    font-family: Arial, Helvetica, sans-serif;
+    height: var(--controlPanelHeight);
+    line-height: var(--controlPanelHeight);
+    min-width: 600px;
+    min-height: var(--controlPanelHeight);
+}
+
+.lifeText {
+    margin: 0px;
+    font-weight: normal;
+    line-height: inherit;
+}
+
+.lifeControlButton {
+    color: black;
+    margin: 0px 5px;
+    line-height: inherit;
+    /*Buttons need this explicitly for some reason*/
+    font-size: 14px;
+    font-family: Arial, Helvetica, sans-serif;
+    outline: none;
+}
+
+.gliderModeLabel {
+    overflow: hidden;
+    max-height: calc(var(--controlPanelHeight) + 4px);
+    min-width: max-content;
+    margin: 0px 2px;
+}
+
+.lifeControlButton, .gliderModeLabel {
+    font-weight: bold;
+    border-radius: 20px;
+    border: 2px solid var(--niceDarkGreyColor);
+}
+
+.lifeControlButton, .gliderModeLabel, .gliderDirectionLabel, #lifeCanvas {
+    cursor: pointer;
+}
+
+.lifeControlButton, .gliderModeInner:before, .gliderDirectionBox {
+    background-color: var(--niceLightGreyColor);
+}
+
+.lifeStarted, .lifeControlButton:hover, .gliderModeInner:after {
+    background-color: var(--niceDarkGreyColor);
+    color: white;
+}
+
+.lifeStarted:hover {
+    background-color: var(--niceLightGreyColor);
+    color: black;
+}
+
+.gliderMode {
+    position: relative;
+}
+
+.gliderMode input#gliderModeCheckbox {
+    display: none;
+}
+
+.gliderModeInner {
+    width: 130px;
+    min-width: 200%;
+    margin-left: -100%;
+    margin-right: 2px;
+    transition: margin 0.3s ease-in 0s;
+    text-align: center;
+}
+
+.gliderModeInner:before, .gliderModeInner:after {
+    float: left;
+    width: 50%;
+}
+
+.gliderModeInner:before {
+    content: "Pointer mode";
+}
+
+.gliderModeInner:after {
+    content: "Glider mode";
+}
+
+#gliderModeCheckbox:checked + .gliderModeLabel .gliderModeInner {
+    margin-left: 2px;
+}
+
+.gliderDirection {
+    flex-wrap: wrap;
+    margin: 2px;
+    width: var(--controlPanelHeight);
+    height: var(--controlPanelHeight);
+    min-width: var(--controlPanelHeight);
+    min-height: var(--controlPanelHeight);
+}
+
+.gliderDirectionLabel {
+    width: 50%;
+    height: 50%;
+}
+
+.gliderDirectionLabel:hover input.gliderDirectionRadio ~ .gliderDirectionBox {
+    background-color: darkslategray;
+}
+
+.gliderDirectionLabel input.gliderDirectionRadio:checked ~ .gliderDirectionBox {
+    background-color: var(--niceDarkGreyColor);
+}
+
+.gliderDirectionRadio {
+    display: none;
+}
+
+.gliderDirectionBox {
+    height: 95%;
+    width: 95%;
+    border: solid;
+    border-width: 1px;
+    border-color: var(--niceDarkGreyColor);
+}
+
+select.lifeStartDropDown {
+    border: 2px solid var(--niceDarkGreyColor);
+    margin: 2px 5px;
+    font-size: 14px;
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: bold;
+    background-color: var(--niceLightGreyColor);
+    height: var(--controlPanelHeight);
+    -webkit-appearance: none;
+    -moz-appearance: none;
+}
+
+select.lifeStartDropDown option:hover {
+    box-shadow: 0 0 10px 100px #1882A8 inset;
+}
+select.lifeStartDropDown::-ms-expand {
+    display: none;
+}
+
+.lifeSlider {
+    width: 100%;
+    height: 25px;
+    background: #d3d3d3;
+    outline: none;
+    opacity: 0.7;
+}
+
+.lifeSlider:hover {
+    opacity: 1;
+}
