@@ -1,4 +1,4 @@
-﻿import { default as Stats } from '/stats.module.js';
+﻿const Stats = (await import(document.location.href + 'stats.module.js')).default;
 
 class WindowInteropModel {
     constructor(dotNetRef, pixelSize) {
