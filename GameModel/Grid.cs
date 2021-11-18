@@ -10,7 +10,10 @@ namespace GameModel
 
         private Cell[] CellsNext { get; set; }
 
-        private BitArray BitMap;
+        private CellData[] Alive;
+        private CellData[] Dead;
+        private int AliveLength = 0;
+        private int DeadLength = 0;
 
         public int Width { get; private set; }
 
@@ -40,7 +43,8 @@ namespace GameModel
                     CellsNext[i * width + j] = new Cell(false);
                 }
             }
-            BitMap = new BitArray(width * height);
+            Alive = new CellData[width * height];
+            Dead = new CellData[width * height];
         }
 
         public static Grid Create(int width, int height, StartOptions options, double probability = 0.1)
@@ -50,9 +54,9 @@ namespace GameModel
             return grid;
         }
 
-        public BitArray GetAliveCells()
+        public (CellData[] alive, int aliveLength, CellData[] dead, int deadLength) GetAliveCells()
         {
-            return BitMap;
+            return (Alive, AliveLength, Dead, DeadLength);
         }
 
         public void Set(int x, int y, bool isAlive)
@@ -61,13 +65,17 @@ namespace GameModel
             if (cell.IsAlive != isAlive)
             {
                 cell.IsAlive = isAlive;
-                BitMap.Set(y * Width + x, isAlive);
+                ref var state = ref (isAlive ? ref Alive[AliveLength++] : ref Dead[DeadLength++]);
+                state.X = x;
+                state.Y = y;
                 UpdateCellNeighbours(Cells, y, x, isAlive);
             }
         }
 
-        public BitArray NextGeneration()
+        public (CellData[] alive, int aliveLength, CellData[] dead, int deadLength) NextGeneration()
         {
+            AliveLength = 0;
+            DeadLength = 0;
             for (int i = 0; i != Cells.Length; i++)
             {
                 CellsNext[i].NeighboursAlive = Cells[i].NeighboursAlive;
@@ -85,13 +93,15 @@ namespace GameModel
                     if (cellNextGen.IsAlive != cell.IsAlive)
                     {
                         UpdateCellNeighbours(CellsNext, i, j, cellNextGen.IsAlive);
-                        BitMap.Set(iWidth + j, cellNextGen.IsAlive);
+                        ref var state = ref (cellNextGen.IsAlive ? ref Alive[AliveLength++] : ref Dead[DeadLength++]);
+                        state.X = j;
+                        state.Y = i;
                     }
                 }
             }
 
             (Cells, CellsNext) = (CellsNext, Cells);
-            return BitMap;
+            return (Alive, AliveLength, Dead, DeadLength);
         }
 
         private void UpdateCellNeighbours(Cell[] cells, int row, int column, bool newValue)
@@ -168,16 +178,19 @@ namespace GameModel
 
         private static void PopulateRandomGrid(Grid grid, double probability)
         {
+            grid.AliveLength = 0;
+            grid.DeadLength = 0;
             for (int i = 0; i != grid.Height; i++)
             {
                 int iWidth = i * grid.Width;
                 for (int j = 0; j != grid.Width; j++)
                 {
                     var outcome = Random.NextDouble() < probability ? true : false;
-                    grid.Cells[iWidth+ j].IsAlive = outcome;
-                    grid.BitMap.Set(iWidth + j, outcome);
+                    grid.Cells[iWidth + j].IsAlive = outcome;
                     if (outcome)
                     {
+                        ref var state = ref grid.Alive[grid.AliveLength++];
+                        (state.X, state.Y) = (j, i);
                         grid.UpdateCellNeighbours(grid.Cells, i, j, outcome);
                     }
                 }

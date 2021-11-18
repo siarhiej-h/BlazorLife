@@ -1,9 +1,4 @@
 ﻿namespace GameModel
 {
-    public class CellData
-    {
-        public int X { get; set; }
-
-        public int Y { get; set; }
-    }
+    public record struct CellData(int X, int Y);
 }
