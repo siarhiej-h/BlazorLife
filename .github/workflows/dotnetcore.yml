@@ -12,6 +12,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+    - name: replace base href for github pages to load resources correctly
+      run: sed -i 's/<base href=\"\/\" \/>/<base href=\"\/BlazorLife\/\" \/>/' /home/runner/work/BlazorLife/BlazorLife/BlazorLife/wwwroot/index.html
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
       with:
