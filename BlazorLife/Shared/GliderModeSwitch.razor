@@ -1,6 +1,4 @@
-﻿@inject WindowInterop _windowInterop;
-
-<div class="gliderMode">
+﻿<div class="gliderMode">
     <input type="checkbox" id="gliderModeCheckbox" value=@IsGlider @onchange=OnGliderModeValueChange>
     <label class="gliderModeLabel" for="gliderModeCheckbox">
         <span class="gliderModeInner"></span>
@@ -76,18 +74,15 @@
         }
 
         await base.OnInitializedAsync();
-        await _windowInterop.SetGliderMode(IsGlider, GliderDirection);
     }
 
-    private async Task OnDirectionChange(ChangeEventArgs evt)
+    private void OnDirectionChange(ChangeEventArgs evt)
     {
-        GliderDirection = Enum.Parse<GliderDirection>((string)evt.Value);
-        await _windowInterop.SetGliderDirection(GliderDirection);
+        GliderDirection = Enum.Parse<GliderDirection>((string) evt.Value);
     }
 
-    private async Task OnGliderModeValueChange(ChangeEventArgs evt)
+    private void OnGliderModeValueChange(ChangeEventArgs evt)
     {
         IsGlider = !IsGlider;
-        await _windowInterop.SetGliderMode(IsGlider);
     }
 }

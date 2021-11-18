@@ -1,0 +1,101 @@
+﻿@inject IJSRuntime JS
+@implements IAsyncDisposable
+
+<canvas id="lifeCanvas" @ref="canvasElem" hidden></canvas>
+
+@code {
+    [Parameter] public int PixelSize { get; set; }
+    [Parameter] public bool SimStarted { get; set; }
+    [Parameter] public Func<(CellData[] alive, int aliveLength, CellData[] dead, int deadLength)> OnRenderFrame { get; set; }
+    [Parameter] public Action<int, int> OnJsClick { get; set; }
+
+    public (int Rows, int Cols) GridDimensions { get; private set; }
+
+    private ElementReference canvasElem;
+    private DotNetObjectReference<GridRenderer> selfReference;
+
+    private IJSObjectReference module;
+    private IJSUnmarshalledObjectReference jsContext;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            selfReference = DotNetObjectReference.Create(this);
+            module = await JS.InvokeAsync<IJSObjectReference>("import", "./Shared/GridRenderer.razor.js");
+            jsContext = await module.InvokeAsync<IJSUnmarshalledObjectReference>("createInteropModel", selfReference, PixelSize);
+            if (jsContext == null)
+            {
+                throw new Exception("Uh oh! Something bad happened on js side.");
+            }
+
+            int[] values = await jsContext.InvokeAsync<int []>("getSize");
+            GridDimensions = (values[0], values[1]);
+            RenderInitState();
+        }
+    }
+
+    public void NotifyStarted()
+    {
+        SimStarted = true;
+    }
+
+    [JSInvokable]
+    public void RenderNextFrame()
+    {
+        if (!SimStarted)
+        {
+            return;
+        }
+
+        var (alive, aliveLength, dead, deadLength) = OnRenderFrame.Invoke();
+        jsContext.InvokeUnmarshalled<CellData[], int, bool, object> ("renderState", alive, aliveLength, true);
+        jsContext.InvokeUnmarshalled<CellData[], int, bool, object> ("renderState", dead, deadLength, false);
+        jsContext.InvokeVoid("onNextFrame", nameof(RenderNextFrame));
+    }
+
+    public void ProcessDiff(CellData[] alive = null, CellData[] dead = null)
+    {
+        if (alive != null)
+        {
+            jsContext.InvokeUnmarshalled<CellData[], int, bool, object> ("renderState", alive, alive.Length, true);
+        }
+
+        if (dead != null)
+        {
+            jsContext.InvokeUnmarshalled<CellData[], int, bool, object> ("renderState", dead, dead.Length, false);
+        }
+    }
+
+    public async Task Clear()
+    {
+        await jsContext.InvokeVoidAsync("clear");
+    }
+
+    public void RenderInitState()
+    {
+        var (alive, aliveLength, _, _) = OnRenderFrame.Invoke();
+        jsContext.InvokeUnmarshalled<CellData[], int, bool, object> ("renderState", alive, aliveLength, true);
+    }
+
+    [JSInvokable]
+    public void JsOnClick(int x, int y)
+    {
+        OnJsClick.Invoke(x, y);
+    }
+
+    public async Task<(int rows, int cols)> Resize(int newSize)
+    {
+        PixelSize = newSize;
+        int[] values = await jsContext.InvokeAsync<int[]>("resize", PixelSize);
+        return GridDimensions = (values[0], values[1]);
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        jsContext?.InvokeVoid("disposeContext");
+        jsContext?.Dispose();
+        selfReference?.Dispose();
+        await (module?.DisposeAsync() ?? default);
+    }
+}
